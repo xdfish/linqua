@@ -1,0 +1,17 @@
+<div class="record-container">
+  <div>
+    <button (click)="startRecording()" [disabled]="recording">
+      {{ !recording ? "Start recording" : "Recording ..." }}
+    </button>
+    <button (click)="stopRecording()" *ngIf="recording">Stop recording</button>
+  </div>
+
+  <!-- <button (click)="playRecording()" *ngIf="!recording && audioFile">
+  Play recording
+</button> -->
+  <div>
+    <audio *ngIf="audioBlobUrl" controls>
+      <source [src]="audioBlobUrl" type="audio/mp3" />
+    </audio>
+  </div>
+</div>

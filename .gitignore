@@ -7,7 +7,9 @@
 /bazel-out
 
 # Node
-/node_modules
+**/node_modules
+/backend/public/models
+/backend/__pycache__
 npm-debug.log
 yarn-error.log
 

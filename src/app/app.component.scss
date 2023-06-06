@@ -1,0 +1,34 @@
+.container {
+  width: 80%;
+  margin: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.task-description {
+  font-size: large;
+}
+
+.btn {
+  padding: 5px;
+  margin: 5px;
+}
+
+.task-answer {
+  display: flex;
+  border: 1px solid darkgray;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  > div {
+    padding: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    border-bottom: 1px solid darkgray;
+    width: calc(100% - 10px);
+  }
+}

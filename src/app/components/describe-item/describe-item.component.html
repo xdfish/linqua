@@ -1,0 +1,18 @@
+<div>
+  <div class="header">{{ taskData.title }}</div>
+  <div class="description">{{ taskData.description }}</div>
+  <div class="content">
+    <img [src]="itemUrl" />
+  </div>
+  <div class="user-solution">
+    <!-- <textarea
+      [(ngModel)]="userSolution"
+      placeholder="Enter solution by text"
+    ></textarea> -->
+    <app-record-solution
+      (recordDone)="answerRecorded($event)"
+      (recordStarted)="taskStart()"
+    ></app-record-solution>
+    <button *ngIf="audioFile" (click)="sendAnswer()">Send answer</button>
+  </div>
+</div>
