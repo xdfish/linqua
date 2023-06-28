@@ -19,6 +19,8 @@
     "@angular/platform-browser-dynamic": "^16.0.0",
     "@angular/router": "^16.0.0",
     "@types/recordrtc": "^5.6.11",
+    "csvtojson": "^2.0.10",
+    "mongoose": "^7.3.1",
     "recordrtc": "^5.6.2",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
