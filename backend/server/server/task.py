@@ -96,7 +96,7 @@ class DescribeTask(Task):
             return base64.b64encode(img).decode('utf-8')
         return None
         
-    def solve(self, speech) -> DescribeTaskReport:
+    def solve(self, speech: Speech) -> DescribeTaskReport:
         self.solution: Speech = speech
         self._check_length()
         self._check_grammar()
@@ -111,7 +111,6 @@ class DescribeTask(Task):
             hitwords_used=self.hitwords_used
             )
     
-    @property
     def info(self) -> DescribeTaskInfo:
          return DescribeTaskInfo(
              taskid = self.id,
@@ -127,7 +126,7 @@ class DescribeTask(Task):
         else: 
             self.score_length = int(100 * words_above_min / word_range)
     
-    def _check_hitwords(self):
+    def _check_hitwords(self): #Score is between 0 and 100
         words_in_solution: int = 0
         for word in self.hitwords:
             in_solution = word.lower() in self.solution.words
