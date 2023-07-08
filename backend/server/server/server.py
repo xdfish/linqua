@@ -15,6 +15,7 @@ from fastapi.staticfiles import StaticFiles
 app = FastAPI()
 api = FastAPI()
 app.mount('/api', api)
+
 app.mount("/", StaticFiles(directory="www", html = True), name="static")
 
 @api.post('/login')
@@ -52,7 +53,7 @@ def task_add(request: Request, info: str = Form(None), image: UploadFile = File(
 def task_random(request: Request, exclude_ids: str = Form(None)):
    exclude_ids: List[str] = json.loads(exclude_ids) if exclude_ids else []
    if randId := DescribeTask.get_random_id(exclude_ids):
-      return DescribeTask(randId).info
+      return DescribeTask(randId).info()
    return Response('no tasks left', 400)
 
 @api.get('/task/list')
