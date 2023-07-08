@@ -9,7 +9,7 @@
                     <v-card-subtitle>Task {{curTask + 1}} of {{maxTasks}}</v-card-subtitle>
                     <v-card-title>{{tasks[curTask].text}}</v-card-title>
                     <v-card-text>
-                        <div style="width: 400px; margin: auto; text-align: center;">
+                        <div style="width: 400px; margin: auto; text-align: center;" v-if="!nextEnabled">
                             <audio-recorder :attempts="1" :after-recording="solveTask" :show-upload-button="false"/>
                         </div>
                     </v-card-text>
