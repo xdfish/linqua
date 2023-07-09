@@ -4,4 +4,6 @@ python-multipart>=0.0.6
 pymongo
 vosk
 language-tool-python
-pydub
+numpy
+openpyxl
+pandas
