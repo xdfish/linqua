@@ -9,15 +9,21 @@ from datetime import datetime
 from pydantic import BaseModel
 import base64
 import random
-import pydub
 
 TIME_FORMAT: str = "%d.%m.%Y, %H:%M:%S"
 
 class Task:
-    TASK_TYPE: str
-    id: str
+    TASK_TYPE: str      #REQUIRED FOR SUBCLASSES!
+    __db_data: Dict     #WILL BE SET WHILE INIT
+     
     def __init__(self, id: str) -> None:
-        ...
+        self.__db_data = db.task.find_one({'_id': ObjectId(id)})
+        if not self.__db_data:
+            raise LinquaExceptions.TaskUnknown(f'unkown Task with id: {id}')
+        self.id: str = id
+
+        if not self.__db_data['task_type'] == self.TASK_TYPE:
+            raise LinquaExceptions.WrongTaskClass(f'task with id {id} is not type "{self.TASK_TYPE}"')
 
     def solve(self):
         ...
@@ -71,23 +77,21 @@ class DescribeTask(Task):
     TASK_TYPE = 'DESCRIBE'
     grammar_tool = tool = language_tool_python.LanguageTool('en-US')
 
-    def __init__(self, task_id: str) -> None:
-        if not (task := db.task.find_one({'_id': ObjectId(task_id)})):
-            raise LinquaExceptions.TaskUnknown(f'unkown Task with id: {task_id}')
-        if not task['task_type'] == DescribeTask.TASK_TYPE:
-            raise LinquaExceptions.WrongTaskClass(f'task with id {task_id} is not type "describe"')
-        
-        self.id: str = str(task['_id'])
-        self.image_id: str = task['image_id']
-        self.text: str = task['text']
-        self.word_count_min: int = task['word_count_min']
-        self.word_count_best: int = task['word_count_best']
-        self.hitwords: List[str] = task['hitwords']
+    def __init__(self, id: str) -> None:
+        super().__init__(id)
+        self.id: str = str(self.__db_data['_id'])
+        self.image_id: str = self.__db_data['image_id']
+        self.text: str = self.__db_data['text']
+        self.word_count_min: int = self.__db_data['word_count_min']
+        self.word_count_best: int = self.__db_data['word_count_best']
+        self.hitwords: List[str] = self.__db_data['hitwords']
         self.hitwords_used: List[HitwordsUsed] = []
         self.grammar_errors: List[GrammarError] = []
         self.score_length: int = 0
         self.score_hitword: int = 0
         self.score_grammar: int = 0
+
+
 
     @property
     def imageb64(self) -> Optional[str]:
