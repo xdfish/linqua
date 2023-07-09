@@ -53,7 +53,7 @@ def task_add(request: Request, info: str = Form(None), image: UploadFile = File(
 def task_random(request: Request, exclude_ids: str = Form(None)):
    exclude_ids: List[str] = json.loads(exclude_ids) if exclude_ids else []
    if randId := DescribeTask.get_random_id(exclude_ids):
-      return DescribeTask(randId).info()
+      return DescribeTask(randId).overview
    return Response('no tasks left', 400)
 
 @api.get('/task/list')

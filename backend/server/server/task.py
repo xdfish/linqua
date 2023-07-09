@@ -7,33 +7,36 @@ from datetime import datetime
 
 class Task:
     TASK_TYPE: str      #REQUIRED FOR SUBCLASSES!
-    __db_data: Dict     #WILL BE SET WHILE INIT
 
     file_db: GridFS = db.files
     db: Collection = db.task
 
     def __init__(self, id: str) -> None:
-        self.__db_data = Task.db.find_one({'_id': ObjectId(id)})
-        if not self.__db_data:
+        self.__task_data = Task.db.find_one({'_id': ObjectId(id)})
+        if not self._task_data:
             raise LinquaExceptions.TaskUnknown(f'unkown Task with id: {id}')
-        if not self.__db_data['task_type'] == self.TASK_TYPE:
+        if not self._task_data['task_type'] == self.TASK_TYPE:
             raise LinquaExceptions.WrongTaskClass(f'task with id {id} is not type "{self.TASK_TYPE}"')
+    
+    @property
+    def _task_data(self) -> Dict:
+        return self.__task_data
 
     @property
     def creator(self) -> str:
-        return self.__db_data.get('creator')
+        return self._task_data.get('creator')
     
     @property
     def created(self) -> str:
-        return self.__db_data.get('created')
+        return self._task_data.get('created')
     
     @property
     def id(self) -> str:
-        return self.__db_data['id']
+        return str(self.objectId)
     
     @property
     def objectId(self) -> ObjectId:
-        return ObjectId(self.id)
+        return self._task_data['_id']
     
     @property
     def overview(self):

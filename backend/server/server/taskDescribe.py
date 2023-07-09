@@ -36,11 +36,11 @@ class DescribeTask(Task):
 
     def __init__(self, id: str) -> None:
         super().__init__(id)
-        self.image_id: str = self.__db_data['image_id']
-        self.text: str = self.__db_data['text']
-        self.word_count_min: int = self.__db_data['word_count_min']
-        self.word_count_best: int = self.__db_data['word_count_best']
-        self.hitwords: List[str] = self.__db_data['hitwords']
+        self.image_id: str = self._task_data['image_id']
+        self.text: str = self._task_data['text']
+        self.word_count_min: int = self._task_data['word_count_min']
+        self.word_count_best: int = self._task_data['word_count_best']
+        self.hitwords: List[str] = self._task_data['hitwords']
         self.hitwords_used: List[HitwordsUsed] = []
         self.grammar_errors: List[GrammarError] = []
         self.score_length: int = 0
