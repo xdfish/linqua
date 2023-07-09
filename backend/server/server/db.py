@@ -11,9 +11,10 @@ MONGO_CFG: Dict = dict(
     password = 'password'
 )
 
-TIME_FORMAT: str = "%d.%m.%Y, %H:%M:%S"
+
 
 class DataBase:
+    TIME_FORMAT: str = "%d.%m.%Y, %H:%M:%S"
     def __init__(self) -> None:
         try:
             self.__mongo_db = pymongo.MongoClient(**MONGO_CFG)['linqua']
