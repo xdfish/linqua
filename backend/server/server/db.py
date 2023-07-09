@@ -11,8 +11,6 @@ MONGO_CFG: Dict = dict(
     password = 'password'
 )
 
-
-
 class DataBase:
     TIME_FORMAT: str = "%d.%m.%Y, %H:%M:%S"
     def __init__(self) -> None:
