@@ -25,14 +25,22 @@ class Task:
         if not self.__db_data['task_type'] == self.TASK_TYPE:
             raise LinquaExceptions.WrongTaskClass(f'task with id {id} is not type "{self.TASK_TYPE}"')
 
+    @property
+    def overview(self):
+        # relevant information for the user to solve the task
+        ...
+
     def solve(self):
+        # called to solve the task
         ...
 
     @staticmethod
     def create():
+        # create a new task
         ...
     
     def delete(self):
+        # delete existing task
         ...
     
     @classmethod
@@ -49,6 +57,8 @@ class Task:
         tasks.sort()
         return tasks
     
+
+
 class GrammarError(BaseModel):
     message: str
     offset: int
@@ -115,7 +125,8 @@ class DescribeTask(Task):
             hitwords_used=self.hitwords_used
             )
     
-    def info(self) -> DescribeTaskInfo:
+    @property
+    def overview(self) -> DescribeTaskInfo:
          return DescribeTaskInfo(
              taskid = self.id,
              text = self.text,
