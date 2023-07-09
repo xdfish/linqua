@@ -53,12 +53,14 @@ class Task:
         task_attribs['creator'] = creator
         task_attribs['created'] = datetime.now().strftime(db.TIME_FORMAT)
         task_attribs['task_type'] = task_type
-        return Task.db.insert_one(task_attribs).inserted_id
+        return str(Task.db.insert_one(task_attribs).inserted_id)
     
     def delete(self) -> bool:
         # delete existing task
         return Task.db.delete_one({'_id': self.objectId}).deleted_count > 0
     
+
+    #TASKS METHOD ----
     @classmethod
     def get_random_id(cls, exclude_ids: List[str]):
         tasks: List[Task] = [str(task['_id']) for task in Task.db.find({'task_type': cls.TASK_TYPE, '_id': { '$nin' : [ObjectId(id) for id in exclude_ids]}}, {'_id': 1})]
