@@ -1,7 +1,7 @@
-from fastapi import FastAPI, Form, Request, Response, UploadFile, File, APIRouter
+from fastapi import FastAPI, Form, Request, Response, UploadFile, File
 from session import session_required
 from user import SessionUser, User
-from task import Task, DescribeTask
+from taskDescribe import DescribeTask
 from enum import Enum
 from typing import *
 from exceptions import LinquaExceptions
@@ -72,7 +72,6 @@ def task_delete(request: Request, id: str = Form(...)):
 def task_solve(request: Request, id: str = Form(...), record: UploadFile = File(...)):
    task = DescribeTask(id)
    solution = task.solve(Speech(record.file.read(), record.filename.split('.')[-1]))
-   print(solution)
    return solution
 
 #ADMIN ONLY
