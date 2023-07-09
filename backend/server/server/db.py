@@ -1,7 +1,9 @@
 from typing import *
 from log import logging as log
 import pymongo
+from pymongo.collection import Collection
 import gridfs
+from gridfs import GridFS
 
 #ONLY DEV!
 MONGO_CFG: Dict = dict(
@@ -16,9 +18,9 @@ class DataBase:
     def __init__(self) -> None:
         try:
             self.__mongo_db = pymongo.MongoClient(**MONGO_CFG)['linqua']
-            self.user = self.__mongo_db['user']
-            self.task = self.__mongo_db['task']
-            self.files = gridfs.GridFS(self.__mongo_db)
+            self.user: Collection = self.__mongo_db['user']
+            self.task: Collection = self.__mongo_db['task']
+            self.files: GridFS = gridfs.GridFS(self.__mongo_db)
         except Exception as e:
             log.error('error connecting to database')
             log.debug(e)
