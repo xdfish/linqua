@@ -85,7 +85,7 @@ class DescribeTask(Task):
     
     @staticmethod
     def create(text: str, word_count_min: int, word_count_best: int, hitwords: List[str] = [], image: bytes = None, creator: str = None) -> str:
-        return super().create(
+        return super(DescribeTask, DescribeTask).create(
             creator = creator, 
             task_type = DescribeTask.TASK_TYPE, 
             task_attribs = dict(
