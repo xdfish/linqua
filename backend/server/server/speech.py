@@ -36,6 +36,9 @@ class Speech:
     @property
     def word_count(self) -> int:
         return len(self.words)
+    
+    def has_words(self, words: List[str]) -> Dict[str, bool]:
+        return {word : word in self.words for word in [w.lower() for w in words]}
 
     def _bytes_to_mono_wav(self, stereo_wav: bytes) -> Wave_read:
         _time_sart: datetime = datetime.now()
