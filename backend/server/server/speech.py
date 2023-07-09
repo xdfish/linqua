@@ -4,6 +4,9 @@ import wave, io, json, audioop
 from datetime import datetime, timedelta
 from wave import Wave_read
 from pydub import AudioSegment
+import language_tool_python
+from language_tool_python.match import Match
+from pydantic import BaseModel
 
 SetLogLevel(-1)
 MODEL = [
@@ -13,17 +16,32 @@ MODEL = [
     'model/vosk-model-en-us-daanzu-20200905-lgraph'
 ]
 
-class Speech:    
-    model = Model(MODEL[1])
+
+class GrammarError(BaseModel):
+    message: str
+    offset: int
+    length: int
+    suggestion: str
+
+class WordPresent(BaseModel):
+    word: str
+    present: bool
+
+class Speech:
+    __GRAMMAR_TOOL = language_tool_python.LanguageTool('en-US')
+    __SPEECH_MODEL = Model(MODEL[1])
     time_convert: timedelta
     time_analyze: timedelta
+    duration: float
     def __init__(self, audio: bytes, audio_type: str = 'wav') -> None:
         self.analyze_result: List[Dict] = []
         self.audio: bytes = audio
         if audio_type == 'mp3':
             audio = self._mp3_to_wav(audio)
         self.wave: Wave_read = self._bytes_to_mono_wav(audio)
-        self._analyze_text()
+        self._analyze_meta()    #0
+        self._analyze_text()    #1
+        self._analyze_grammar() #2
     
     @property
     def words(self) -> List[str]:
@@ -37,8 +55,8 @@ class Speech:
     def word_count(self) -> int:
         return len(self.words)
     
-    def has_words(self, words: List[str]) -> Dict[str, bool]:
-        return {word : word in self.words for word in [w.lower() for w in words]}
+    def has_words(self, words: List[str]) -> List[WordPresent]:
+        return [WordPresent(word=word, present=word in self.words) for word in [w.lower() for w in words]]
 
     def _bytes_to_mono_wav(self, stereo_wav: bytes) -> Wave_read:
         _time_sart: datetime = datetime.now()
@@ -67,7 +85,7 @@ class Speech:
 
     def _analyze_text(self):
         _time_sart: datetime = datetime.now()
-        recognizer = KaldiRecognizer(self.model, self.wave.getframerate())
+        recognizer = KaldiRecognizer(self.__SPEECH_MODEL, self.wave.getframerate())
         recognizer.SetWords(True)
         while len(data := self.wave.readframes(4000)) != 0:
             if recognizer.AcceptWaveform(data):
@@ -75,6 +93,23 @@ class Speech:
         self.analyze_result += json.loads(recognizer.FinalResult())['result']
         self._clean_results()
         self.time_analyze: timedelta = datetime.now() - _time_sart
+
+    def _analyze_grammar(self):
+        errors: List[Match] = self.__GRAMMAR_TOOL.check(self.text)
+        self.grammar: List[GrammarError] = []
+        for error in errors:
+            if error.category == 'GRAMMAR':
+                self.grammar.append(
+                    GrammarError(
+                        message = error.message,
+                        offset = error.offset,
+                        length = error.errorLength,
+                        suggestion = error.replacements[0] if len(error.replacements) > 0 else ''
+                    )
+                )
+
+    def _analyze_meta(self):
+        self.duration: float = self.wave.getnframes()/float(self.wave.getframerate())
 
     def _clean_results(self):
         for index, result in enumerate(self.analyze_result):

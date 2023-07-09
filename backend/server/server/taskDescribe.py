@@ -1,20 +1,9 @@
 from typing import *
 from task import Task
-from speech import Speech
+from speech import Speech, GrammarError, WordPresent
 from pydantic import BaseModel
-import language_tool_python
-from language_tool_python.match import Match
 import base64
 
-class GrammarError(BaseModel):
-    message: str
-    offset: int
-    length: int
-    suggestion: str
-
-class HitwordsUsed(BaseModel):
-    word: str
-    used: bool
 
 class DescribeTaskReport(BaseModel):
     text: str
@@ -23,7 +12,7 @@ class DescribeTaskReport(BaseModel):
     score_hitword: int
     score_grammar: int
     grammar_errors: List[GrammarError]
-    hitwords_used: List[HitwordsUsed]
+    hitwords_used: List[WordPresent]
 
 class DescribeTaskInfo(BaseModel):
     taskid: str
@@ -32,8 +21,6 @@ class DescribeTaskInfo(BaseModel):
 
 class DescribeTask(Task):
     TASK_TYPE = 'DESCRIBE'
-    grammar_tool = tool = language_tool_python.LanguageTool('en-US')
-
     def __init__(self, id: str) -> None:
         super().__init__(id)
         self.image_id: str = self._task_data['image_id']
@@ -41,7 +28,7 @@ class DescribeTask(Task):
         self.word_count_min: int = self._task_data['word_count_min']
         self.word_count_best: int = self._task_data['word_count_best']
         self.hitwords: List[str] = self._task_data['hitwords']
-        self.hitwords_used: List[HitwordsUsed] = []
+        self.hitwords_used: List[WordPresent] = []
         self.grammar_errors: List[GrammarError] = []
         self.score_length: int = 0
         self.score_hitword: int = 0
@@ -56,9 +43,9 @@ class DescribeTask(Task):
         
     def solve(self, speech: Speech) -> DescribeTaskReport:
         self.solution: Speech = speech
-        self._check_length()
-        self._check_grammar()
-        self._check_hitwords()
+        self.grammar_errors = self.solution.grammar
+        self.hitwords_used = self.solution.has_words(self.hitwords)
+        self._calc_score()
         return DescribeTaskReport(
             text = self.solution.text,
             words = self.solution.words,
@@ -77,39 +64,25 @@ class DescribeTask(Task):
              b64image = self.imageb64
          )
     
-    def _check_length(self): #Score is between 0 and 100
+    def _calc_score(self):
+        #LENGTH #Score is between 0 and 100
         if (words_above_min := self.solution.word_count-self.word_count_min) <= 0:
             self.score_length = 0
         elif (word_range := self.word_count_best - self.word_count_min) <= words_above_min:
             self.score_length = 100
         else: 
             self.score_length = int(100 * words_above_min / word_range)
+
+        #HITWORDS #Score is between 0 and 100
+        hits = 0
+        for used_word in self.hitwords_used:
+            hits += 1 if used_word.present else 0
+        self.score_hitword = int(100 * hits / len(self.hitwords))
+
+        #GRAMMAR #Score is between 0 and 100
+        self.score_grammar = 0 if len(self.grammar_errors) > 0 else 100
+
     
-    def _check_hitwords(self): #Score is between 0 and 100
-        words_in_solution: int = 0
-        for word in self.hitwords:
-            in_solution = word.lower() in self.solution.words
-            words_in_solution += 1 if in_solution else 0
-            self.hitwords_used.append(HitwordsUsed(
-                word = word,
-                used = in_solution
-            ))
-        self.score_hitword = int(100 * words_in_solution / len(self.hitwords))
-
-    def _check_grammar(self): #Score is between 0 and 100
-        errors: List[Match] = self.grammar_tool.check(self.solution.text)
-        for error in errors:
-            if error.category == 'GRAMMAR':
-                self.grammar_errors.append(
-                    GrammarError(
-                        message = error.message,
-                        offset = error.offset,
-                        length = error.errorLength,
-                        suggestion = error.replacements[0] if len(error.replacements) > 0 else ''
-                    )
-                )
-        self.score_grammar = 100 if len(self.grammar_errors) == 0 else 0
-
     @staticmethod
     def create(text: str, word_count_min: int, word_count_best: int, hitwords: List[str] = [], image: bytes = None, creator: str = None) -> str:
         return super().create(
