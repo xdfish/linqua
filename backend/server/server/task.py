@@ -64,7 +64,6 @@ class Task:
     #TASKS METHOD ----
     @classmethod
     def get_random_id(cls, exclude_ids: List[str]):
-        print(cls.TASK_TYPE)
         tasks: List[Task] = [str(task['_id']) for task in Task.db.find({'task_type': cls.TASK_TYPE, '_id': { '$nin' : [ObjectId(id) for id in exclude_ids]}}, {'_id': 1})]
         if len(tasks) > 0:
             return random.choice(tasks)
