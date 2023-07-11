@@ -7,7 +7,7 @@
               <v-list-item-content>{{this.user.role}}</v-list-item-content>
               <v-list-item-action><v-btn color="red" outlined small fab @click="logout"><v-icon>mdi-logout</v-icon></v-btn></v-list-item-action>
             </v-list-item>
-            <v-list-item link to='/profile'>
+            <v-list-item link :to="{name: 'profile'}">
               <v-list-item-content>
                 <v-list-item-title>{{this.user.username}}</v-list-item-title>
                 <v-list-item-subtitle>{{this.user.firstname}} {{this.user.lastname}}</v-list-item-subtitle>
@@ -19,7 +19,7 @@
           </v-list>
           <v-divider></v-divider>
           <v-list>
-            <v-list-item link to='/tasks'>
+            <v-list-item link :to="{name: 'tasks'}">
               <v-list-item-icon>
                 <v-icon>mdi-book-open-page-variant</v-icon>
               </v-list-item-icon>
@@ -38,7 +38,7 @@
           </v-list>
           <v-divider></v-divider>
           <v-list>
-            <v-list-item link to='/home'>
+            <v-list-item link :to="{name: 'home'}">
               <v-list-item-icon>
                 <v-icon>mdi-play</v-icon>
               </v-list-item-icon>

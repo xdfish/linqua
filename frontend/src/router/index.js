@@ -1,12 +1,12 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
+
 import Main from '../views/Main.vue'
 import Home from '../views/Home.vue'
 import Login from '../views/Login.vue'
+import Profile from '../views/Profile.vue'
 import Tasks from '../views/Tasks.vue'
 import Task from '../views/Task.vue'
-import Profile from '../views/Profile.vue'
-import Session from '../views/Session.vue'
 
 Vue.use(VueRouter)
 
@@ -18,19 +18,16 @@ const routes = [
       component: Main,
       children: [
         { 
-          path: '/home', component: Home
+          path: '/home', component: Home, name: 'home'
         },
         { 
-          path: '/tasks', component: Tasks
+          path: '/tasks', component: Tasks, name: 'tasks'
         },
         { 
-          path: '/task', component: Task
+          path: '/task', component: Task, props: true, name: 'task'
         },
         { 
-          path: '/profile', component: Profile
-        },
-        { 
-          path: '/session/:type', component: Session
+          path: '/profile', component: Profile, name: 'profile'
         },
       ],
   },

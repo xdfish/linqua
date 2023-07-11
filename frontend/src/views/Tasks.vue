@@ -5,31 +5,26 @@
             <v-select outlined dense label='Task Type' :items="taskTypes" v-model="task.task_type"></v-select>
             <v-textarea label='Task Text' outlined dense v-model="task.text"></v-textarea>
             <v-combobox label="Hitwords" outlined dense clearable v-model="task.hitwords" multiple small-chips></v-combobox>
-            Min/Max word count
-            <v-range-slider v-model="task.word_range" :max="25" :min="0" hide-details class="align-center">
-            <template v-slot:prepend>
-              <v-text-field
-                :value="task.word_range[0]"
-                class="mt-0 pt-0"
-                hide-details
-                single-line
-                type="number"
-                style="width: 60px"
-                @change="$set(task.word_range, 0, $event)"
-              ></v-text-field>
-            </template>
-            <template v-slot:append>
-              <v-text-field
-                :value="task.word_range[1]"
-                class="mt-0 pt-0"
-                hide-details
-                single-line
-                type="number"
-                style="width: 60px"
-                @change="$set(task.word_range, 1, $event)"
-              ></v-text-field>
-            </template>
-          </v-range-slider>
+            <v-row class="pb-0">
+                <v-col cols=4><v-switch v-model="countdown_a" inset label="countdown (s)" hide-details></v-switch></v-col>
+                <v-col class="mt-5 pb-0"><v-slider v-model="task.countdown" thumb-label="always" min="1" :disabled="!countdown_a" hide-details></v-slider></v-col>
+            </v-row>
+            <v-row class="pb-0">
+                <v-col cols=4><v-switch v-model="max_time_a" inset label="time limit (s)" hide-details></v-switch></v-col>
+                <v-col class="mt-5 pb-0"><v-slider v-model="task.time_limit" thumb-label="always" min="1" :disabled="!max_time_a" hide-details></v-slider></v-col>
+            </v-row>
+            <v-row class="pb-0" >
+                <v-col cols=4><v-switch v-model="min_words_a" inset label="min words"  hide-details></v-switch></v-col>
+                <v-col class="mt-5 pb-0"><v-slider v-model="task.word_count_min" thumb-label="always" min="1" :max="task.word_count_best-1" :disabled="!min_words_a" hide-details></v-slider></v-col>
+            </v-row>
+            <v-row class="pb-0" >
+                <v-col cols=4><v-switch v-model="best_words_a" inset label="best words"  hide-details></v-switch></v-col>
+                <v-col class="mt-5 pb-0"><v-slider v-model="task.word_count_best" thumb-label="always" :min="task.word_count_min ? task.word_count_min+1 : 1" :disabled="!best_words_a" hide-details></v-slider></v-col>
+            </v-row>
+            <v-row class="pb-0" >
+                <v-col cols=4><v-switch v-model="max_words_a" inset label="max words"  hide-details></v-switch></v-col>
+                <v-col class="mt-5 pb-0"><v-slider v-model="task.word_count_max" thumb-label="always" :min="task.word_count_min" :disabled="!max_words_a" hide-details></v-slider></v-col>
+            </v-row>
           <v-btn rounded outlined color="primary" block class="mt-5" @click="addTask"> Create Task</v-btn>
         </v-card-text>
         <v-card-text v-else-if="action == 'list'">
@@ -62,29 +57,42 @@ import requests from '../requests';
 
 const task_init = () => ({
     task_type: 'DESCRIBE',
-    text: '',
-    word_range: [0, 25],
-    hitwords: []
+    text: 'Build a scentence with the predetermined words',
+    word_count_min: 0,
+    word_count_best: 25,
+    word_count_max: 100,
+    hitwords: [],
+    countdown: 15,
+    time_limit: 20
 })
 
 export default {
 
   data: () => ({
     action: '',
-    taskTypes: ['DESCRIBE'],
+    taskTypes: ['DESCRIBE', 'TALK'],
     task: task_init(),
-    tasks: []
+    tasks: [],
+    countdown_a: false,
+    max_time_a: false,
+    min_words_a: false,
+    best_words_a: false,
+    max_words_a: false,
   }),
   methods: {
     async addTask(){
         const info = {
             text: this.task.text,
-            word_count_min: this.task.word_range[0],
-            word_count_best: this.task.word_range[1],
-            hitwords: this.task.hitwords
+            hitwords: this.task.hitwords,
+            countdown: this.countdown_a ? this.task.countdown : 0.0,
+            time_limit: this.max_time_a ? this.task.time_limit : 0.0,
+            word_count_min: this.min_words_a ? this.task.word_count_min : 0,
+            word_count_best: this.best_words_a ? this.task.word_count_best: 0,
+            word_count_max: this.max_words_a ? this.task.word_count_max : 0,
         }
         const formData = new FormData()
-        formData.append('info', JSON.stringify(info))
+        formData.append('task_type', this.task.task_type)
+        formData.append('task_data', JSON.stringify(info))
         requests.post('/api/task/add', formData).then(() => {
             this.task = task_init()
             alert('Task Added')
