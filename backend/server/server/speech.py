@@ -91,10 +91,8 @@ class Speech:
             if recognizer.AcceptWaveform(data):
                 if tmp_result := json.loads(recognizer.Result()).get('result'):
                     self.analyze_result += tmp_result
-                #self.analyze_result += json.loads(recognizer.Result())['result']
         if tmp_result := json.loads(recognizer.FinalResult()).get('result'):
             self.analyze_result += tmp_result
-        #self.analyze_result += json.loads(recognizer.FinalResult())['result']
         self._clean_results()
         self.time_analyze: timedelta = datetime.now() - _time_sart
 
@@ -102,7 +100,6 @@ class Speech:
         errors: List[Match] = self.__GRAMMAR_TOOL.check(self.text)
         self.grammar: List[GrammarError] = []
         for error in errors:
-            print(error)
             if error.category == 'GRAMMAR':
                 self.grammar.append(
                     GrammarError(
