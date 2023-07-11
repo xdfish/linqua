@@ -6,7 +6,7 @@ import random
 from datetime import datetime
 
 class Task:
-    TASK_TYPE: str      #REQUIRED FOR SUBCLASSES!
+    TASK_TYPE: str = None     #REQUIRED FOR SUBCLASSES!
 
     file_db: GridFS = db.files
     db: Collection = db.task
@@ -15,8 +15,9 @@ class Task:
         self.__task_data = Task.db.find_one({'_id': ObjectId(id)})
         if not self._task_data:
             raise LinquaExceptions.TaskUnknown(f'unkown Task with id: {id}')
-        if not self._task_data['task_type'] == self.TASK_TYPE:
-            raise LinquaExceptions.WrongTaskClass(f'task with id {id} is not type "{self.TASK_TYPE}"')
+        if self.TASK_TYPE:
+            if not self._task_data['task_type'] == self.TASK_TYPE:
+                raise LinquaExceptions.WrongTaskClass(f'task with id {id} is not type "{self.TASK_TYPE}"')
     
     @property
     def _task_data(self) -> Dict:
@@ -63,6 +64,7 @@ class Task:
     #TASKS METHOD ----
     @classmethod
     def get_random_id(cls, exclude_ids: List[str]):
+        print(cls.TASK_TYPE)
         tasks: List[Task] = [str(task['_id']) for task in Task.db.find({'task_type': cls.TASK_TYPE, '_id': { '$nin' : [ObjectId(id) for id in exclude_ids]}}, {'_id': 1})]
         if len(tasks) > 0:
             return random.choice(tasks)
