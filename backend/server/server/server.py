@@ -2,6 +2,8 @@ from fastapi import FastAPI, Form, Request, Response, UploadFile, File
 from session import session_required
 from user import SessionUser, User
 from taskDescribe import DescribeTask
+from taskTalk import TaskTalk
+from task import Task
 from enum import Enum
 from typing import *
 from exceptions import LinquaExceptions
@@ -41,36 +43,47 @@ def user_info(request: Request) -> UserInfo:
 
 @api.post('/task/add')
 @session_required
-def task_add(request: Request, info: str = Form(None), image: UploadFile = File(None)):
+def task_add(request: Request, task_type: str = Form(...), task_data: str = Form(...), image: UploadFile = File(None)):
    user = SessionUser(request)
    imgage_data: bytes = image.file.read() if image else None
-   info: Dict = json.loads(info)
-   Task = DescribeTask.create(image=imgage_data, creator=user.id, **info)
-   return Task.info
+   task_data: Dict = json.loads(task_data)
+   if task_type == 'DESCRIBE':
+      return DescribeTask.create(image=imgage_data, creator=user.id, **task_data)
+   elif task_type == 'TALK':
+      return TaskTalk.create(creator=user.id, **task_data)
+   return Response('unkknown task_type', 400)
 
 @api.post('/task/random')
 @session_required
-def task_random(request: Request, exclude_ids: str = Form(None)):
+def task_random(request: Request, task_type: str = Form(...), exclude_ids: str = Form(None)):
    exclude_ids: List[str] = json.loads(exclude_ids) if exclude_ids else []
-   if randId := DescribeTask.get_random_id(exclude_ids):
-      return DescribeTask(randId).overview
+   print(task_type)
+   if task_type == 'DESCRIBE':
+      if randId := DescribeTask.get_random_id(exclude_ids):
+         return DescribeTask(randId).overview
+   elif task_type == 'TALK':
+      if randId := TaskTalk.get_random_id(exclude_ids):
+         return TaskTalk(randId).overview
    return Response('no tasks left', 400)
 
 @api.get('/task/list')
 @session_required
 def task_list(request: Request):
-   return DescribeTask.list()
+   return Task.list()
 
 @api.post('/task/delete')
 @session_required
 def task_delete(request: Request, id: str = Form(...)):
-   task = DescribeTask(id)
+   task = Task(id)
    return task.delete()
 
 @api.post('/task/solve')
 @session_required
-def task_solve(request: Request, id: str = Form(...), record: UploadFile = File(...)):
-   task = DescribeTask(id)
+def task_solve(request: Request, id: str = Form(...), task_type: str = Form(...), record: UploadFile = File(...)):
+   if task_type == 'DESCRIBE':
+      task = DescribeTask(id)
+   elif task_type == 'TALK':
+      task = TaskTalk(id)
    solution = task.solve(Speech(record.file.read(), record.filename.split('.')[-1]))
    return solution
 
