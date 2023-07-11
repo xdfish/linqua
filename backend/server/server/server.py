@@ -2,7 +2,7 @@ from fastapi import FastAPI, Form, Request, Response, UploadFile, File
 from session import session_required
 from user import SessionUser, User
 from taskDescribe import DescribeTask
-from taskTalk import TaskTalk
+from taskTalk import TalkTask
 from task import Task
 from enum import Enum
 from typing import *
@@ -50,7 +50,7 @@ def task_add(request: Request, task_type: str = Form(...), task_data: str = Form
    if task_type == 'DESCRIBE':
       return DescribeTask.create(image=imgage_data, creator=user.id, **task_data)
    elif task_type == 'TALK':
-      return TaskTalk.create(creator=user.id, **task_data)
+      return TalkTask.create(creator=user.id, **task_data)
    return Response('unkknown task_type', 400)
 
 @api.post('/task/random')
@@ -62,8 +62,8 @@ def task_random(request: Request, task_type: str = Form(...), exclude_ids: str =
       if randId := DescribeTask.get_random_id(exclude_ids):
          return DescribeTask(randId).overview
    elif task_type == 'TALK':
-      if randId := TaskTalk.get_random_id(exclude_ids):
-         return TaskTalk(randId).overview
+      if randId := TalkTask.get_random_id(exclude_ids):
+         return TalkTask(randId).overview
    return Response('no tasks left', 400)
 
 @api.get('/task/list')
@@ -83,7 +83,7 @@ def task_solve(request: Request, id: str = Form(...), task_type: str = Form(...)
    if task_type == 'DESCRIBE':
       task = DescribeTask(id)
    elif task_type == 'TALK':
-      task = TaskTalk(id)
+      task = TalkTask(id)
    solution = task.solve(Speech(record.file.read(), record.filename.split('.')[-1]))
    return solution
 
