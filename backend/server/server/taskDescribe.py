@@ -17,6 +17,7 @@ class DescribeTaskReport(BaseModel):
 class DescribeTaskInfo(BaseModel):
     taskid: str
     text: str
+    time_limit: Optional[int]
     b64image: Optional[str] = None
 
 class DescribeTask(Task):
@@ -25,9 +26,10 @@ class DescribeTask(Task):
         super().__init__(id)
         self.image_id: str = self._task_data['image_id']
         self.text: str = self._task_data['text']
-        self.word_count_min: int = self._task_data['word_count_min']
-        self.word_count_best: int = self._task_data['word_count_best']
+        self.word_count_min: Optional[int] = self._task_data['word_count_min']
+        self.word_count_best: Optional[int] = self._task_data['word_count_best']
         self.hitwords: List[str] = self._task_data['hitwords']
+        self.time_limit: Optional[int] = self._task_data['time_limit']
         self.hitwords_used: List[WordPresent] = []
         self.grammar_errors: List[GrammarError] = []
         self.score_length: int = 0
@@ -61,17 +63,23 @@ class DescribeTask(Task):
          return DescribeTaskInfo(
              taskid = self.id,
              text = self.text,
+             time_limit = self.time_limit,
              b64image = self.imageb64
          )
     
     def _calc_score(self):
         #LENGTH #Score is between 0 and 100
-        if (words_above_min := self.solution.word_count-self.word_count_min) <= 0:
-            self.score_length = 0
-        elif (word_range := self.word_count_best - self.word_count_min) <= words_above_min:
+        if self.word_count_min and self.word_count_best:
+            if (words_above_min := self.solution.word_count-self.word_count_min) <= 0:
+                self.score_length = 0
+            elif (word_range := self.word_count_best - self.word_count_min) <= words_above_min:
+                self.score_length = 100
+            else: 
+                self.score_length = int(100 * words_above_min / word_range)
+        elif self.word_count_min:
+            self.score_length = 100 if self.solution.word_count > self.word_count_min else 0
+        else:
             self.score_length = 100
-        else: 
-            self.score_length = int(100 * words_above_min / word_range)
 
         #HITWORDS #Score is between 0 and 100
         hits = 0
@@ -81,10 +89,9 @@ class DescribeTask(Task):
 
         #GRAMMAR #Score is between 0 and 100
         self.score_grammar = 0 if len(self.grammar_errors) > 0 else 100
-
     
     @staticmethod
-    def create(text: str, word_count_min: int, word_count_best: int, hitwords: List[str] = [], image: bytes = None, creator: str = None) -> str:
+    def create(text: str, word_count_min: Optional[int], word_count_best: Optional[int], hitwords: List[str] = [], image: bytes = None, creator: str = None, time_limit: str = None, **kwargs) -> str:
         return super(DescribeTask, DescribeTask).create(
             creator = creator, 
             task_type = DescribeTask.TASK_TYPE, 
@@ -94,6 +101,7 @@ class DescribeTask(Task):
                 word_count_min = word_count_min,
                 word_count_best = word_count_best,
                 hitwords = hitwords,
+                time_limit = time_limit,
             ))
     
     def delete(self) -> bool:
