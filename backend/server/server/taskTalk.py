@@ -74,7 +74,7 @@ class TalkTask(Task):
         for used_word in self.hitwords_used:
             hits += 1 if used_word.present else 0
         score_hitword = int(100 * hits / len(self.hitwords))
-        score_length = 100 if self.solution.word_count > self.word_count_min else 100 * (self.solution.word_count/self.word_count_min)
+        score_length = int(100 if self.solution.word_count > self.word_count_min else 100 * (self.solution.word_count/self.word_count_min))
         return TaskTalkScore(
             length=score_length,
             hitwods=score_hitword
