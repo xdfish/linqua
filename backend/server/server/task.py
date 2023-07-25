@@ -7,10 +7,12 @@ from datetime import datetime
 
 class Task:
     TASK_TYPE: str = None     #REQUIRED FOR SUBCLASSES!
+    TIME_FORMAT: str = db.TIME_FORMAT
 
     file_db: GridFS = db.files
+    tmp_storage: Collection = db.tmp
     db: Collection = db.task
-
+    
     def __init__(self, id: str) -> None:
         self.__task_data = Task.db.find_one({'_id': ObjectId(id)})
         if not self._task_data:
