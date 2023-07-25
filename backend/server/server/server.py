@@ -3,6 +3,7 @@ from session import session_required
 from user import SessionUser, User
 from taskDescribe import DescribeTask
 from taskTalk import TalkTask
+from taskTalkAuto import TalkAutoTask
 from task import Task
 from enum import Enum
 from typing import *
@@ -11,7 +12,7 @@ from basemodels import *
 from speech import Speech
 import json
 from fastapi.staticfiles import StaticFiles
-
+from words import Words
 
 
 app = FastAPI()
@@ -51,12 +52,15 @@ def task_add(request: Request, task_type: str = Form(...), task_data: str = Form
       return DescribeTask.create(image=imgage_data, creator=user.id, **task_data)
    elif task_type == 'TALK':
       return TalkTask.create(creator=user.id, **task_data)
+   elif task_type == 'TALK-AUTOGEN':
+      return TalkAutoTask.create(creator=user.id, **task_data)
    return Response('unkknown task_type', 400)
 
 @api.post('/task/random')
 @session_required
-def task_random(request: Request, task_type: str = Form(...), exclude_ids: str = Form(None)):
+def task_random(request: Request, task_type: str = Form(...), exclude_ids: str = Form(None), auto_data: str = Form(None)):
    exclude_ids: List[str] = json.loads(exclude_ids) if exclude_ids else []
+   auto_data: Dict[str: Any] = json.loads(auto_data) if auto_data else {}
    print(task_type)
    if task_type == 'DESCRIBE':
       if randId := DescribeTask.get_random_id(exclude_ids):
@@ -64,6 +68,9 @@ def task_random(request: Request, task_type: str = Form(...), exclude_ids: str =
    elif task_type == 'TALK':
       if randId := TalkTask.get_random_id(exclude_ids):
          return TalkTask(randId).overview
+   elif task_type == 'TALK-AUTOGEN':
+      if randId := TalkAutoTask.get_random_id([]):
+         return TalkAutoTask(randId).generate(auto_data.get('min_freq'), auto_data.get('max_freq'))
    return Response('no tasks left', 400)
 
 @api.get('/task/list')
@@ -79,13 +86,31 @@ def task_delete(request: Request, id: str = Form(...)):
 
 @api.post('/task/solve')
 @session_required
-def task_solve(request: Request, id: str = Form(...), task_type: str = Form(...), record: UploadFile = File(...)):
+def task_solve(request: Request, id: str = Form(...), task_type: str = Form(...), record: UploadFile = File(...), tmpid: str = Form(None)):
    if task_type == 'DESCRIBE':
       task = DescribeTask(id)
    elif task_type == 'TALK':
       task = TalkTask(id)
-   solution = task.solve(Speech(record.file.read(), record.filename.split('.')[-1]))
-   return solution
+   elif task_type == 'TALK-AUTOGEN':
+      task = TalkAutoTask(id)
+      return task.solve(Speech(record.file.read(), record.filename.split('.')[-1]), tmpid)
+   return task.solve(Speech(record.file.read(), record.filename.split('.')[-1]))
+
+
+@api.post('/words/update')
+@session_required
+def word_upadte(request: Request, data: UploadFile = File(...)):
+   if not data.filename.split('.xlsx'):
+      return Response('SUBTLEX words file has to be .xlsx', 400)
+   return Response(json.dumps({'msg':'ok'})) if Words.update(data.file.read()) else Response('error updating word database') 
+
+@api.get('/words/classes')
+@session_required
+def word_classes(request: Request):
+   try:
+      return Words().classes
+   except Exception:
+      return []
 
 #ADMIN ONLY
 #TODO
