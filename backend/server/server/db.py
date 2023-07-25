@@ -20,6 +20,7 @@ class DataBase:
             self.__mongo_db = pymongo.MongoClient(**MONGO_CFG)['linqua']
             self.user: Collection = self.__mongo_db['user']
             self.task: Collection = self.__mongo_db['task']
+            self.tmp: Collection = self.__mongo_db['tmp']
             self.files: GridFS = gridfs.GridFS(self.__mongo_db)
         except Exception as e:
             log.error('error connecting to database')
