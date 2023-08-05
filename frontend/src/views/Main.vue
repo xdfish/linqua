@@ -27,6 +27,14 @@
                 <v-list-item-title>Manage Tasks</v-list-item-title>
               </v-list-item-content>
             </v-list-item>
+            <v-list-item link :to="{name: 'words'}">
+              <v-list-item-icon>
+                <v-icon>mdi-database-sync-outline</v-icon>
+              </v-list-item-icon>
+              <v-list-item-content>
+                <v-list-item-title>Manage Word DB</v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
             <v-list-item disabled>
               <v-list-item-icon>
                 <v-icon>mdi-account-group</v-icon>
@@ -50,7 +58,7 @@
         </v-navigation-drawer>
         <v-app-bar app>
           <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
-          <v-toolbar-title>Linqua</v-toolbar-title>
+          <v-toolbar-title>LINQUA</v-toolbar-title>
         </v-app-bar>
         <v-main>
         <router-view/>
