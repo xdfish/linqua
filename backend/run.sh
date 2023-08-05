@@ -28,7 +28,7 @@ then
     then
          docker run -d -e MONGO_INITDB_ROOT_USERNAME='linqua_db_admin' -e MONGO_INITDB_ROOT_PASSWORD='dev_password' -p 27017:27017 --name linqua-db mongo:latest  
     fi
-    
+    echo "LINQUA SETUP COMPLETE"
 elif test "$1" = "dev"
 then
     echo "DEVELOPMENT MODE!!!! DO NOT USE IN PRODUCTION!!!"
