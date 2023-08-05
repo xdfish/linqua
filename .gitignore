@@ -6,6 +6,9 @@ backend/server/server/model
 backend/server/server/log
 backend/server/server/www
 
+# pycache
+*__pycache__
+
 # local env files
 *.env.local
 *.env.*.local
@@ -26,3 +29,6 @@ backend/server/server/www
 *.sw?
 
 backend/env
+
+# Jupyter files
+*.ipynb_checkpoints
