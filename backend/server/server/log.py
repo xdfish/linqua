@@ -1,4 +1,6 @@
-import logging
+import logging, pathlib
+
+pathlib.Path('./log').mkdir(exist_ok=True)
 
 logging.basicConfig(
     filename='log/linqua.log',

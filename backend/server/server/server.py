@@ -10,7 +10,7 @@ from typing import *
 from exceptions import LinquaExceptions
 from basemodels import *
 from speech import Speech
-import json
+import json, pathlib
 from fastapi.staticfiles import StaticFiles
 from words import Words
 
@@ -19,6 +19,7 @@ app = FastAPI()
 api = FastAPI()
 app.mount('/api', api)
 
+pathlib.Path('./www').mkdir(exist_ok=True)
 app.mount("/", StaticFiles(directory="www", html = True), name="static")
 
 @api.post('/login')
