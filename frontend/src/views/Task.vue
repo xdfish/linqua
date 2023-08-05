@@ -10,7 +10,8 @@
               <b>{{ scoreCheer }}</b>
               <v-rating v-model="scoreProgress" :length="5" color="primary" large readonly half-increments></v-rating>
               <p v-if="scoreCheer!='-'"> You solved <b>{{ prevScores.length }}</b> tasks of type: <b>{{ taskType }}</b> with an average rating of <b>[{{ score.total.toFixed(2) }}/5]</b></p>
-          </v-col>
+              <p v-if="difficulty!=undefined">Difficulty: {{ difficulty }}/2</p>
+            </v-col>
         </v-row>
         <v-spacer></v-spacer>
         <v-card-actions>
@@ -102,6 +103,11 @@
   <script>
 
     const scoreText = ["Are you kidding?", "Don't stop practicing!", "You can do better!" , "Good job!" ,"Well done!" ,"Perfect!"]
+    const difficultyFreq = [ //Min and Max Frequency of the words
+      [0.8, 1.0], //EASY
+      [0.3, 0.8], //MEDIUM
+      [0.0, 0.3], //HARD
+    ]
     import requests from '../requests';
     export default {
       props: {
@@ -112,6 +118,10 @@
         sessionLength: {
           type: Number,
           required: true
+        },
+        difficulty: {
+          type: Number,
+          required: false
         }
       },
       data: () => ({
@@ -123,6 +133,7 @@
           timeLimit: 0,
           timeLeft: 0,
           words: [],
+          tmpid: undefined
         },
         score: {
           total: 0,
@@ -189,6 +200,7 @@
           formData.append('id', this.task.taskid)
           formData.append('task_type', this.taskType)
           formData.append('record', record.blob, 'record.mp3')
+          formData.append('tmpid', this.task.tmpid)           //only for tasks with tmp functionality
           requests.post('/api/task/solve', formData).then(score => {
               this.setScore(score)
               this.isSolved = true
@@ -209,6 +221,13 @@
           const formData = new FormData()
           formData.append('task_type', this.taskType)
           formData.append('exclude_ids', JSON.stringify(this.prevTasks))
+          if (this.difficulty != undefined){
+            const freqData = {
+              min_freq: difficultyFreq[this.difficulty][0], 
+              max_freq: difficultyFreq[this.difficulty][1]
+            }
+            formData.append('auto_data', JSON.stringify(freqData))
+          }
           requests.post('/api/task/random', formData).then(task => {
             this.setTask(task)
             const notFirstTask = this.isSolved
@@ -228,6 +247,7 @@
           this.task.timeLimit = nextTask.time_limit
           this.task.timeLeft = nextTask.time_limit
           this.task.words = nextTask.hitwords
+          this.task.tmpid = nextTask.tmpid
         },
         setScore(curScore){
           this.score.length = curScore.score.length/20
@@ -269,7 +289,6 @@
               this.hitwordProgress.push(elem.word)
             }
           })
-          console.log(this.hitwordProgress);
         },
         showGrammarText(errIndex){
           if (errIndex == -1){
@@ -286,9 +305,6 @@
           this.score.total = (this.prevScores.reduce((a, b) => a + b, 0.0) / this.prevScores.length) || 0.0;
           this.isComplete = true
           this.animateScore()
-        },
-        forceDesign () {
-          console.log();
         },
       },
       created () {
