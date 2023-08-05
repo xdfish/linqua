@@ -7,6 +7,7 @@ import Login from '../views/Login.vue'
 import Profile from '../views/Profile.vue'
 import Tasks from '../views/Tasks.vue'
 import Task from '../views/Task.vue'
+import Words from '../views/Words.vue'
 
 Vue.use(VueRouter)
 
@@ -28,6 +29,9 @@ const routes = [
         },
         { 
           path: '/profile', component: Profile, name: 'profile'
+        },
+        { 
+          path: '/words', component: Words, name: 'words'
         },
       ],
   },
