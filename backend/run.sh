@@ -23,9 +23,17 @@ then
     fi
     echo "[] Setting up python environment"
     python3 -m venv env && source env/bin/activate && cd server && pip3 install -q -r requirements.txt
+    echo "[] Setting up database (mongodb) via Docker"
+    if [ ! "$(docker ps -a | grep linqua-db)" ]
+    then
+         docker run -d -e MONGO_INITDB_ROOT_USERNAME='linqua_db_admin' -e MONGO_INITDB_ROOT_PASSWORD='dev_password' -p 27017:27017 --name linqua-db mongo:latest  
+    fi
+    
 elif test "$1" = "dev"
 then
     echo "DEVELOPMENT MODE!!!! DO NOT USE IN PRODUCTION!!!"
+    docker start linqua-db
+    echo "WARNING: Data of linqua dev database is only saved inside container (not persistent)"
     source "${SCRIPTPATH}/env/bin/activate" && cd $SERVERPATH && python3 -m uvicorn server:app --reload
 elif test "$1" = "prod"
 then
