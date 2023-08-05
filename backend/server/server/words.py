@@ -1,3 +1,4 @@
+from typing import *
 import pandas as pd
 import numpy as np
 from io import BytesIO
@@ -15,13 +16,36 @@ class Words:
             raise Exception(errmsg)
         self.__words: pd.DataFrame = pd.read_pickle(pickled_word_data)
     
+    @property
+    def classes(self) -> List[str]:
+        word_types = [t for t in self.__words['Type'].unique()]
+        word_types.sort()
+        return word_types
+    
+    @property
+    def overview(self) -> Dict:
+        return dict(
+            word_count = len(self.__words),
+            classes = self.classes
+        )
+
     @staticmethod
-    def update(words_data: bytes):
-        dfwords = Words.__clean_subtlex_data(pd.read_excel(words_data))
-        buffer = BytesIO()
-        dfwords.to_pickle(buffer)
-        buffer.seek(0)
-        db.files.put(buffer.read(), filename=Words.__dbRecName)
+    def update(words_data: bytes) -> bool:
+        try:
+            dfwords = Words.__clean_subtlex_data(pd.read_excel(words_data))
+            buffer = BytesIO()
+            dfwords.to_pickle(buffer)
+            buffer.seek(0)
+            for old_file_id in db.files.find({'filename': Words.__dbRecName}).distinct('_id'):
+                db.files.delete(old_file_id)
+                log.info(f'removed existing word data - {old_file_id}')
+            db.files.put(buffer.read(), filename=Words.__dbRecName)
+            log.info('word db updated')
+            return True
+        except Exception as e:
+            log.error('error updating word database')
+            log.debug(e)
+        return False
 
     @staticmethod
     def __clean_subtlex_data(df: pd.DataFrame) -> pd.DataFrame:
@@ -59,9 +83,3 @@ class Words:
     def get(self, word_type: str, amount: int, min_freq: float = 0.0, max_freq: float = 1.0):
         available_words = self.__words[(self.__words['Type'] == word_type) & (self.__words['FrequencyType'] >= min_freq) & (self.__words['FrequencyType'] <= max_freq)]['Word']
         return [word for word in available_words.sample(amount if len(available_words) >= amount else len(available_words))]
-
-    @property
-    def classes(self):
-        word_types = [t for t in self.__words['Type'].unique()]
-        word_types.sort()
-        return word_types
