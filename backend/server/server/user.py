@@ -81,3 +81,5 @@ class SessionUser(User):
     @staticmethod
     def start_session(userid):
         return Session(userid).start()
+
+#u = User.create('testuser', 'password', 'testuser', 'usertest', 'test@test.test', 'ADMIN')
