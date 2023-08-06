@@ -1,0 +1,34 @@
+*.DS_Store
+frontend/node_modules
+frontend/dist
+
+backend/server/server/model
+backend/server/server/log
+backend/server/server/www
+
+# pycache
+*__pycache__
+
+# local env files
+*.env.local
+*.env.*.local
+
+# Log files
+*npm-debug.log*
+*yarn-debug.log*
+*yarn-error.log*
+*pnpm-debug.log*
+
+# Editor directories and files
+*.idea
+*.vscode
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+backend/env
+
+# Jupyter files
+*.ipynb_checkpoints
