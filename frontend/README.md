@@ -1,5 +1,11 @@
 # frontend
 
+On OSX you have to set the environment variable NODE_OPTIONS with the option --openssl-legacy-provider
+
+```
+export NODE_OPTIONS=--openssl-legacy-provider
+```
+
 ## Project setup
 ```
 npm install
