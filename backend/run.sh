@@ -35,6 +35,7 @@ then
         then
             docker run -e MONGO_INITDB_ROOT_USERNAME='linqua_db_admin' -e MONGO_INITDB_ROOT_PASSWORD='dev_password' -p 27017:27017 --name linqua-db mongo:latest &
         fi
+	sleep 15
         source "${SCRIPTPATH}/env/bin/activate" && cd $SERVERPATH && python3 -m uvicorn server:app --reload
     )
     db
