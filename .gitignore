@@ -5,6 +5,7 @@ frontend/dist
 backend/server/server/model
 backend/server/server/log
 backend/server/server/www
+backend/server/database
 
 # pycache
 *__pycache__
