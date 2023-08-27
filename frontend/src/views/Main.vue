@@ -67,6 +67,9 @@
 </template>
 
 <script>
+/**
+ * Hier findet eine Liste von den Links, die zu anderen Komponenten der Anwendung führen.
+ */
 import requests from '../requests.js'
 const avatarUri = 'https://avataaars.io/?avatarStyle=Transparent&topType=ShortHairShortCurly&accessoriesType=Prescription02&hairColor=Black&facialHairType=Blank&clotheType=Hoodie&clotheColor=White&eyeType=Default&eyebrowType=DefaultNatural&mouthType=Default&skinColor=Light'
   export default {
@@ -79,7 +82,10 @@ const avatarUri = 'https://avataaars.io/?avatarStyle=Transparent&topType=ShortHa
         lastname: '', 
       }
     }),
-    methods: {
+  methods: {
+      /**
+       * Diese Methode lädt die Details eines Benutzers
+       */
       loadUserData(){
         requests.get('/api/user').then(content => {
           this.user.username = content.username
@@ -88,7 +94,10 @@ const avatarUri = 'https://avataaars.io/?avatarStyle=Transparent&topType=ShortHa
           this.user.email = content.email
           this.user.role = content.role
         }).catch(() => {})
-      },
+    },
+      /**
+       * Diese Methode meldet den Benutzer ab
+       */
       logout(){
         requests.post('/api/logout').then(() => {
           this.$router.push('/Login')

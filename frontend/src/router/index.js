@@ -11,29 +11,30 @@ import Words from '../views/Words.vue'
 
 Vue.use(VueRouter)
 
+// Über Routes werden Benutzer zu entsprechenden Komponenten der Anwendung weitergeleitet
 const routes = [
-  { path: '/', component: Login},
-  { path: '/login', component: Login},
+  { path: '/', component: Login },
+  { path: '/login', component: Login },
   {
-      path: '/main',
-      component: Main,
-      children: [
-        { 
-          path: '/home', component: Home, name: 'home'
-        },
-        { 
-          path: '/tasks', component: Tasks, name: 'tasks'
-        },
-        { 
-          path: '/task', component: Task, props: true, name: 'task'
-        },
-        { 
-          path: '/profile', component: Profile, name: 'profile'
-        },
-        { 
-          path: '/words', component: Words, name: 'words'
-        },
-      ],
+    path: '/main',
+    component: Main,
+    children: [
+      {
+        path: '/home', component: Home, name: 'home'
+      },
+      {
+        path: '/tasks', component: Tasks, name: 'tasks'
+      },
+      {
+        path: '/task', component: Task, props: true, name: 'task'
+      },
+      {
+        path: '/profile', component: Profile, name: 'profile'
+      },
+      {
+        path: '/words', component: Words, name: 'words'
+      },
+    ],
   },
 ];
 

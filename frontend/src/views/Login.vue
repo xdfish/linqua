@@ -14,6 +14,9 @@
 </template>
 
 <script>
+/**
+ * Hier können Benutzer mit einem Benutzername und Passwort anmelden
+ */
 import requests from '../requests.js'
 
 export default {

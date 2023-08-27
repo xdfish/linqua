@@ -101,7 +101,9 @@
   
 
   <script>
-
+/**
+ * Hier sieht der Benutzer die Details zu einer Aufgabe z.B. Hinweise, Korrektur. Er kann Sprache aufnehmen. Er kann zur nächsten Aufgabe springen
+ */
     const scoreText = ["Are you kidding?", "Don't stop practicing!", "You can do better!" , "Good job!" ,"Well done!" ,"Perfect!"]
     const difficultyFreq = [ //Min and Max Frequency of the words
       [0.8, 1.0], //EASY
@@ -170,6 +172,9 @@
             this.stopRecord() 
           }
         },
+        /**
+         * Sprache wird aufgenommen
+         */
         startRecord () {
           this.$refs.recorder.toggleRecorder()
           this.isRecording = true
@@ -177,6 +182,9 @@
             this.updateId = setInterval(this.recordProgress, 50)
           }
         },
+        /**
+         * Aufnahme wird gestoppt
+         */
         stopRecord () {
           this.$refs.recorder.stopRecorder()
           this.isRecording = false
@@ -195,6 +203,10 @@
             }
           }, 1000)
         },
+        /**
+         * Sprache wird an Backend übergeben und Aufgabe wird somit gelöst
+         * @param {*} record 
+         */
         async solveTask(record){
           const formData = new FormData()
           formData.append('id', this.task.taskid)
@@ -206,6 +218,9 @@
               this.isSolved = true
           }).catch(err => alert(err))
         },
+        /**
+         * Nächste Aufgabe wird ausgewählt
+         */
         nextTask () {
           this.isLoading = true
           this.showDetails = false
@@ -239,6 +254,10 @@
             }
           }).catch(err => alert(err))
         },
+        /**
+         * Die nächste Aufgabe wird gesetzt
+         * @param {*} nextTask 
+         */
         setTask(nextTask){
           this.task.taskid = nextTask.taskid
           this.task.text = nextTask.text
@@ -249,6 +268,10 @@
           this.task.words = nextTask.hitwords
           this.task.tmpid = nextTask.tmpid
         },
+        /**
+         * Bewertung wird gesetzt
+         * @param {*} curScore 
+         */
         setScore(curScore){
           this.score.length = curScore.score.length/20
           this.score.words = curScore.score.hitwods/20

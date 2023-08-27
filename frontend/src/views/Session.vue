@@ -45,6 +45,9 @@
 </template>
 
 <script>
+/**
+ * Hier sieht der Benutzer die laufende Sitzung. Er kann auf den Start Knopf drücken um eine Aufgabe zu absolvieren
+ */
 import requests from '../requests';
 
 
@@ -56,7 +59,11 @@ export default {
     maxTasks: 10,
     curTask: -1,
   }),
-  methods: {
+    methods: {
+    /**
+     * Eine zufällige Aufgabe wird ausgewählt
+     * @param {*} curTask 
+     */
     async setTask(curTask){
         this.nextEnabled = false
         if (this.tasks[curTask] == null){
@@ -75,7 +82,11 @@ export default {
         }else{
             this.curTask = curTask
         }
-    },
+        },
+    /**
+     * Aufgenommene Sprache wird an Backend gesendet und bewertet.
+     * @param {*} data 
+     */
     async solveTask(data){
         const formData = new FormData()
         formData.append('id', this.tasks[this.curTask].taskid)

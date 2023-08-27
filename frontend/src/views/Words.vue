@@ -12,6 +12,9 @@
 </template>
     
 <script>
+/**
+ * Man kann hier eine Subtlex Datei auswählen um die Datenbank mit Wörtern zu füllen
+ */
 import requests from '../requests';
 
 export default {

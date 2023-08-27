@@ -81,6 +81,9 @@
 </template>
 
 <script>
+/**
+ *  In Home sieht man eine kleine Übersicht über die erreichten Punkte. Man kann hier die Schwierigkeiten der Aufgaben einstellen
+ * */ 
 export default {
   name: 'Home',
   data: () => ({

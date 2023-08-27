@@ -71,6 +71,9 @@
 </template>
 
 <script>
+/**
+ * Hier kann der Benutzer (Admin) eine Aufgabe definieren und in die Aufgabenliste hinzufügen.
+ */
 import requests from '../requests';
 
 const task_init = () => ({
@@ -102,7 +105,10 @@ export default {
     dynWordClassErr: '',
     dynWordCount: 1,
   }),
-  methods: {
+    methods: {
+    /**
+     * Eingestellte Aufgabe wird ans Backend gesendet
+     */
     async addTask(){
         const info = {
             text: this.task.text,
@@ -121,13 +127,20 @@ export default {
             this.task.hitwords = []
             alert('Task Added')
         }).catch(error => alert(error))
-    },
+        },
+    /**
+     * Holen der Aufgaben aus der Datenbank
+     */
     async showTasks(){
         requests.get('/api/task/list').then(tasks => {
             this.tasks = tasks
             this.action = 'list'
         }).catch(err => alert(err))
-    },
+        },
+    /**
+     * Löschen einer Aufgabe aus der Datenbank
+     * @param {*} id 
+     */
     async deleteTask(id){
         const formData = new FormData()
         formData.append('id', id)
@@ -140,7 +153,10 @@ export default {
         requests.get('/api/words/classes').then((classes) => {
             this.word_classes = classes
         }).catch(err => alert(err))
-    },
+        },
+    /**
+     * Fügt dynamische Wörter zu einer Aufgabe
+     */
     addDynamicHitword(){
         if (this.dynWordClass == ''){
             this.dynWordClassErr = ' '
