@@ -1,8 +1,3 @@
-# Warum haben wir uns für das SUBTLEX_US Lexikon entschieden?
-
-Um unsere App zu Testen und die Funktionen zu evaluieren, benötigten wir einen Datensatz mit Wörtern, welche POS kategorisiert,  und mit Häufigkeitswerten versehen sind. Dieser Datensatz besitzt sehr viele Wörter und erfüllte unsere Kriterien. Andere frei verfügbare Datensätze sind bei weitem nicht so umfangreich oder es wurden unsere Anforderungen nicht erfüllt.
-
-___
 # Anleitung zum Starten des Backends auf einem UNIX System
 ## Voraussetzung 
 Installiert sein muss:
