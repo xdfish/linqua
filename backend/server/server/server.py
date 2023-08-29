@@ -1,6 +1,6 @@
 from fastapi import FastAPI, Form, Request, Response, UploadFile, File
 from session import session_required
-from user import SessionUser, User
+from user import SessionUser, User, admin_init
 from taskDescribe import DescribeTask
 from taskTalk import TalkTask
 from taskTalkAuto import TalkAutoTask
@@ -18,6 +18,9 @@ from words import Words
 app = FastAPI()
 api = FastAPI()
 app.mount('/api', api)
+
+#create admin user (if not exists)
+admin_init()
 
 pathlib.Path('./www').mkdir(exist_ok=True)
 app.mount("/", StaticFiles(directory="www", html = True), name="static")
