@@ -1,5 +1,17 @@
 # frontend
 
+On OSX you have to set the environment variable NODE_OPTIONS with the option --openssl-legacy-provider
+
+```bash
+export NODE_OPTIONS=--openssl-legacy-provider
+```
+
+Next step is to activate the python virtual environment.
+
+```bash
+source ../backend/env/bin/activate
+```
+
 ## Project setup
 ```
 npm install
