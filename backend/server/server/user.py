@@ -12,6 +12,13 @@ from db import db
 
 TIME_FORMAT: str = "%d.%m.%Y, %H:%M:%S"
 
+def admin_init():
+    try:
+        User(username='linqu-admin')
+    except LinquaExceptions.UserUnknown:
+        User.create(uname := 'linqu-admin', upw := 'admin123', 'admin', 'admin', 'admin@admin.admin', 'ADMIN')
+        log.debug(f'admin user created: username: {uname}, password: {upw}')
+
 class User():
     def __init__(self, id: str = None, username: str = None) -> None:
         user = db.user.find_one({'_id': ObjectId(id)} if id else {'username':username})
@@ -65,7 +72,7 @@ class User():
             'created': self.created}
             }
         ).matched_count > 0
-     
+    
     def delete(self) -> bool:
         return db.user.delete_one({'_id': ObjectId(self.id)}).deleted_count > 0
     
@@ -81,5 +88,3 @@ class SessionUser(User):
     @staticmethod
     def start_session(userid):
         return Session(userid).start()
-
-#u = User.create('testuser', 'password', 'testuser', 'usertest', 'test@test.test', 'ADMIN')
