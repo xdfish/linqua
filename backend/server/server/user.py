@@ -14,9 +14,9 @@ TIME_FORMAT: str = "%d.%m.%Y, %H:%M:%S"
 
 def admin_init():
     try:
-        User(username='linqu-admin')
+        User(username='linqua-admin')
     except LinquaExceptions.UserUnknown:
-        User.create(uname := 'linqu-admin', upw := 'admin123', 'admin', 'admin', 'admin@admin.admin', 'ADMIN')
+        User.create(uname := 'linqua-admin', upw := 'admin123', 'admin', 'admin', 'admin@admin.admin', 'ADMIN')
         log.debug(f'admin user created: username: {uname}, password: {upw}')
 
 class User():
