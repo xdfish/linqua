@@ -24,6 +24,8 @@ $ bash run.sh dev
 // In frontend folder
 $ npm run serve
 ```
+6. Wait for application startup (could take up to 5min)
+
 
 ## RUN.SH Hints
 Use [run.sh](backend/run.sh) script to setup or start server in development or production mode
