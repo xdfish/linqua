@@ -19,8 +19,11 @@ $ bash run.sh dev
 ```
 
 5. start frontend - in dev mode
-        
+
+On OSX you have to set the environment variable NODE_OPTIONS with the option --openssl-legacy-provider
+
 ```bash
+export NODE_OPTIONS=--openssl-legacy-provider
 // In frontend folder
 $ npm install
 $ npm run serve
