@@ -9,8 +9,8 @@ from gridfs import GridFS
 MONGO_CFG: Dict = dict(
     host = 'localhost',
     port = 27017,
-    username = 'admin',
-    password = 'password'
+    username = 'linqua_db_admin',
+    password = 'dev_password'
 )
 
 class DataBase:
