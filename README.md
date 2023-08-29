@@ -22,6 +22,7 @@ $ bash run.sh dev
         
 ```bash
 // In frontend folder
+$ npm install
 $ npm run serve
 ```
 6. Wait for application startup (could take up to 5min)
