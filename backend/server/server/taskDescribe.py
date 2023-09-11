@@ -15,14 +15,28 @@ class DescribeTaskReport(BaseModel):
     hitwords_used: List[WordPresent]
 
 class DescribeTaskInfo(BaseModel):
+    """Klasse mit Grundlegenden Informationen einer Beschribungsaufgabe
+    """
     taskid: str
     text: str
     time_limit: Optional[int]
     b64image: Optional[str] = None
 
 class DescribeTask(Task):
+    """Klasse eine Beschrinungsaufgabe (DEPREACTED)
+
+    :param Task: _description_
+    :type Task: _type_
+    :return: _description_
+    :rtype: _type_
+    """
     TASK_TYPE = 'DESCRIBE'
     def __init__(self, id: str) -> None:
+        """Konstruktor zum Erzeugen einer Beschreibungsaufgabe
+
+        :param id: ID der Aufgabe
+        :type id: str
+        """
         super().__init__(id)
         self.image_id: str = self._task_data['image_id']
         self.text: str = self._task_data['text']
@@ -38,12 +52,24 @@ class DescribeTask(Task):
 
     @property
     def imageb64(self) -> Optional[str]:
+        """Liefert das Aufgabenbild b64 formatiert
+
+        :return: Base64 string des Bilds
+        :rtype: Optional[str]
+        """
         if self.image_id != None:
             img = Task.file_db.get(self.image_id).read()
             return base64.b64encode(img).decode('utf-8')
         return None
         
     def solve(self, speech: Speech) -> DescribeTaskReport:
+        """Löst die Aufgabe (eingabe der Sprachdaten)
+
+        :param speech: Srachdaten in Form einer Speech Klasse
+        :type speech: Speech
+        :return: Bewertung der Lösung
+        :rtype: DescribeTaskReport
+        """
         self.solution: Speech = speech
         self.grammar_errors = self.solution.grammar
         self.hitwords_used = self.solution.has_words(self.hitwords)
@@ -60,7 +86,12 @@ class DescribeTask(Task):
     
     @property
     def overview(self) -> DescribeTaskInfo:
-         return DescribeTaskInfo(
+        """Liefert eine Übersicht der Aufgabe (wichtigste Informationen)
+
+        :return: Übersicht der Aufgabe
+        :rtype: DescribeTaskInfo
+        """
+        return DescribeTaskInfo(
              taskid = self.id,
              text = self.text,
              time_limit = self.time_limit,
@@ -68,6 +99,8 @@ class DescribeTask(Task):
          )
     
     def _calc_score(self):
+        """Berechnet den Score der eingegeben Lösung
+        """
         #LENGTH #Score is between 0 and 100
         if self.word_count_min and self.word_count_best:
             if (words_above_min := self.solution.word_count-self.word_count_min) <= 0:
@@ -92,6 +125,25 @@ class DescribeTask(Task):
     
     @staticmethod
     def create(text: str, word_count_min: Optional[int], word_count_best: Optional[int], hitwords: List[str] = [], image: bytes = None, creator: str = None, time_limit: str = None, **kwargs) -> str:
+        """ERzeugt eine Aufgabe vom Typ Beschribung
+
+        :param text: Aufgabentext
+        :type text: str
+        :param word_count_min: Minimale Anzahl an Wörtern (Bewertung)
+        :type word_count_min: Optional[int]
+        :param word_count_best: Beste Anzahl an Wörtern (Bewertung)
+        :type word_count_best: Optional[int]
+        :param hitwords: Liste mit Hitwors die verwendet werden sollen, defaults to []
+        :type hitwords: List[str], optional
+        :param image: Aufgabenbild, defaults to None
+        :type image: bytes, optional
+        :param creator: Ersteller der Aufgabe, defaults to None
+        :type creator: str, optional
+        :param time_limit: Zeitlimit zum lösen der Aufgabe (Spraacheingabe), defaults to None
+        :type time_limit: str, optional
+        :return: Aufgaben ID
+        :rtype: str
+        """
         return super(DescribeTask, DescribeTask).create(
             creator = creator, 
             task_type = DescribeTask.TASK_TYPE, 
@@ -105,6 +157,11 @@ class DescribeTask(Task):
             ))
     
     def delete(self) -> bool:
+        """Löscht die Aufgabe aus der Datenbank
+
+        :return: Erfolg (Ja/Nein)
+        :rtype: bool
+        """
         if self.image_id != None:
             Task.file_db.delete(self.image_id)
         return super().delete()
