@@ -24,11 +24,6 @@ class DescribeTaskInfo(BaseModel):
 
 class DescribeTask(Task):
     """Klasse eine Beschrinungsaufgabe (DEPREACTED)
-
-    :param Task: _description_
-    :type Task: _type_
-    :return: _description_
-    :rtype: _type_
     """
     TASK_TYPE = 'DESCRIBE'
     def __init__(self, id: str) -> None:
