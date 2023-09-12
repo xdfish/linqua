@@ -44,7 +44,9 @@ Downloadlink für die SUBTLEX_US Tabelle [Download](https://osf.io/download/7wx2
 
 ### Warum SUBTLEX_US ?
 Mit der SUBTLEX_US Tabelle haben wir eine umfrangreiche Wortdatenbank, welche nicht nur angibt wie oft ein Wort vorkommt, sondern auch schon mit einer klassifizierung der Wortart (POS-Tagging). 
-Zusätzlich ist für jedes Wort, respektive dessen Wortart, eine Wahrscheinlichkeit angegeben, wie oft diese auch für das jeweilige Wort zutrifft.
+Zusätzlich ist für jedes Wort, respektive dessen Wortart, eine Wahrscheinlichkeit angegeben, wie oft diese auch für das jeweilige Wort zutrifft. 
+Desweiteren steht diese kostenfrei zur Verfügung. 
+Viele andere, derartig umfangreiche Datenbanken, sind kostenpflichtig.
 
 
 ## Funktionsumfang der App
