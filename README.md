@@ -124,6 +124,7 @@ Nach dem Lösen der Aufgabe kann über den Statisik Button über dem **NEXT** Bu
 Sind Wörter grün markiert, dann wurden diese erkannt und es gibt Punkte. 
 Sind sie rot markiert dann fehlen diese und es gibt keine Punkte.
 Über den **NEXT** Button kann die nächste Aufgabe der Sitzung gestartet werden.
+In diesem Beispiel wurden die Wörter **car** und **way** verwendet, **things** nicht.
 
 ![Aufgabe lösen 4](docs/assets/talk_autogen6.png)
 
