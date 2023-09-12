@@ -6,7 +6,6 @@ On OSX and Windows you have to set the environment variable NODE_OPTIONS with th
 export NODE_OPTIONS=--openssl-legacy-provider
 ```
 
-Next step is to activate the python virtual environment.
 
 ## Project setup
 ```
