@@ -1,7 +1,7 @@
 # frontend
 
-Das Frontend ist lediglich für die Visualisierung der Anwendung für den Benutzer zuständig. ALle Endpunkt können theoretisch auch ohne das Frontend betrieben werden, logische Abläufe/Vorgaben kommen ausschließlich vom Backend.
-
+Das Frontend ist lediglich für die Visualisierung der Anwendung für den Benutzer über einen Brwoser (als webapp) zuständig. Alle Endpunkt können theoretisch auch ohne das Frontend betrieben werden, logische Abläufe/Vorgaben kommen ausschließlich vom Backend.
+Eine Anbindung einer Desktopanwendung oder Mobileapp wären entsprechend schnell zu implementieren.
 Das Frontend wurde mit Vue.js entwickelt und verwendet u.A. das nodejs package vuetify für eine ansprechendere visualisierung.
 
 
