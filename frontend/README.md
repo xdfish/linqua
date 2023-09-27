@@ -8,7 +8,7 @@ Das Frontend wurde mit Vue.js entwickelt und verwendet u.A. das nodejs package v
 ## Hinweis
 Bei OSX und Windows muss die Umgebungsvariable NODE_OPTIONS mit folgendem Wert gesetzt sein --openssl-legacy-provider
 
-Ausführlichere Hinweise finden sich in der Projekt [README](../README.md)
+Ausführlichere Hinweise befinden sich in der Projekt [README](../README.md) und in der "npm" Dokumentation.
 
 ```bash
 export NODE_OPTIONS=--openssl-legacy-provider
